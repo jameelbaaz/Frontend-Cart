@@ -5,7 +5,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 # Used Bootstrap-react Components
 
-In The project I have used Bootstrap-react-components, react with redux for state management storing data in localStorage
+In this project I have used Bootstrap-react-components, react with redux for state management storing data in localStorage
 
 ## Available Scripts
 
