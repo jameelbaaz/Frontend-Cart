@@ -1,7 +1,11 @@
-# Used Bootstrap-react Components
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
+# Used Bootstrap-react Components
+
+In The project I have used Bootstrap-react-components, react with redux for state management storing data in localStorage
 
 ## Available Scripts
 
