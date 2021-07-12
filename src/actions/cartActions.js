@@ -1,7 +1,9 @@
-import products from "../products";
-
 export const addToCart = (id, qty) => async (dispatch, getState) => {
-  const product = products.find((product) => product._id === id);
+  // const product = products.find((product) => product._id === id);
+  const productLocal = localStorage.getItem("products");
+  let productParse = JSON.parse(productLocal);
+  // console.log(productParse);
+  const product = productParse.find((product) => product._id === id);
   dispatch({
     type: "CART_ADD_ITEM",
     payload: {
@@ -9,7 +11,9 @@ export const addToCart = (id, qty) => async (dispatch, getState) => {
       name: product.name,
       price: product.price,
       image: product.image,
-      countInStock: product.countInStock,
+      stock: product.stock,
+      material: product.material,
+      createdAt: product.createdAt,
       qty,
     },
   });

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import {
   Row,
   Col,
@@ -9,37 +8,45 @@ import {
   Button,
   Form,
 } from "react-bootstrap";
-import Rating from "../components/Rating";
 import { useDispatch, useSelector } from "react-redux";
 import { listProductsdetails } from "../actions/productActions";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
-import products from "../products";
 
 const ProductScreen = ({ match, history }) => {
   const dispatch = useDispatch();
+
   const [qty, setQty] = useState(1);
+
+  const productLocal = localStorage.getItem("products");
+  let productParse = JSON.parse(productLocal);
+  // console.log(productParse);
+  const productID = productParse.find(
+    (product) => product._id === match.params.id
+  );
+
+  // console.log(productID);
+
   const productDetails = useSelector((state) => state.productDetails);
   const { loading, error, product } = productDetails;
-  const productId = products.find((product) => product._id === match.params.id);
-
-  // console.log(productId);
 
   useEffect(() => {
-    dispatch(listProductsdetails(productId));
-  }, [dispatch, match, productId]);
+    dispatch(listProductsdetails(productID));
+    // console.log(match.params.id);
+  }, [dispatch, match]);
 
   const addToCartHandler = () => {
     history.push(`/cart/${match.params.id}?qty=${qty}`);
   };
 
-  // const product = {};
+  const create_date = new Date(product.createdAt).toLocaleDateString("en-US", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
 
   return (
     <>
-      <Link className="btn btn-light my-3" to="/">
-        Go Back
-      </Link>
       {loading ? (
         <Loader />
       ) : error ? (
@@ -54,17 +61,9 @@ const ProductScreen = ({ match, history }) => {
               <ListGroup.Item>
                 <h3>{product.name}</h3>
               </ListGroup.Item>
-              <ListGroup.Item>
-                <Rating
-                  value={product.rating}
-                  text={`${product.numReviews}  reviews`}
-                />
-              </ListGroup.Item>
+
               <ListGroup.Item>Price:฿{product.price}</ListGroup.Item>
-              <ListGroup.Item>
-                Description: {product.description}
-              </ListGroup.Item>
-              <ListGroup.Item>Created at: {product.createdAt}</ListGroup.Item>
+              <ListGroup.Item>Created at: {create_date}</ListGroup.Item>
               <ListGroup.Item>Material: {product.material}</ListGroup.Item>
             </ListGroup>
           </Col>
@@ -82,13 +81,11 @@ const ProductScreen = ({ match, history }) => {
                 <ListGroup.Item>
                   <Row>
                     <Col>Status</Col>
-                    <Col>
-                      {product.countInStock > 0 ? "In Stock" : "Out of stock"}
-                    </Col>
+                    <Col>{product.stock > 0 ? "In Stock" : "Out of stock"}</Col>
                   </Row>
                 </ListGroup.Item>
 
-                {product.countInStock > 0 && (
+                {product.stock > 0 && (
                   <ListGroup.Item>
                     <Row>
                       <Col>Qty:</Col>
@@ -98,7 +95,7 @@ const ProductScreen = ({ match, history }) => {
                           value={qty}
                           onChange={(e) => setQty(e.target.value)}
                         >
-                          {[...Array(product.countInStock).keys()].map((x) => (
+                          {[...Array(product.stock).keys()].map((x) => (
                             <option key={x + 1} value={x + 1}>
                               {x + 1}
                             </option>
@@ -113,7 +110,7 @@ const ProductScreen = ({ match, history }) => {
                   <Button
                     onClick={addToCartHandler}
                     className="w-100"
-                    disabled={product.countInStock === 0}
+                    disabled={product.stock === 0}
                   >
                     Add to Cart
                   </Button>

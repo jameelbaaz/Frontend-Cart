@@ -1,12 +1,18 @@
-import products from "../products";
-export const listProducts = () => async (dispatch) => {
+import axios from "axios";
+
+export const listProducts = () => async (dispatch, getState) => {
   try {
     dispatch({ type: "PRODUCT_LIST_REQUEST" });
-    const data = products;
-    dispatch({ type: "PRODUCT_LIST_SUCCESS", payload: data });
+    const { data } = await axios.get("/api/robots/");
+    dispatch({ type: "PRODUCT_LIST_SUCCESS", payload: data.data });
   } catch (error) {
     dispatch({ type: "PRODUCT_LIST_FAIL", payload: error.response });
   }
+
+  localStorage.setItem(
+    "products",
+    JSON.stringify(getState().productList.products)
+  );
 };
 
 export const listProductsdetails = (id) => async (dispatch) => {

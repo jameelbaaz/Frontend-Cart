@@ -7,30 +7,29 @@ import Message from "../components/Message";
 import Loader from "../components/Loader";
 import { filterMaterial } from "../actions/filterAction";
 
-const initialState = [
-  {
-    _id: "1",
-    material: "All",
-  },
-  {
-    _id: "2",
-    material: "Plastic",
-  },
-  {
-    _id: "3",
-    material: "Silicon",
-  },
-];
-
 const HomeScreen = ({ history }) => {
   const dispatch = useDispatch();
-
+  // useSelector for selecting the Redux State
   const productList = useSelector((state) => state.productList);
   const { loading, error, products } = productList;
+  // Current Page State and Items on single page local State
+  // const [currentPage, setCurrentPage] = useState(1);
+  // const [itemsPerPage, setItemsPerPage] = useState(9);
 
   useEffect(() => {
+    // dispatch load data from the redux actions
     dispatch(listProducts());
   }, [dispatch]);
+
+  // //Get Current Posts
+  // const indexOfLastItem = currentPage * itemsPerPage;
+  // const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  // const currentItems = products.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Change page
+  // const paginate = (pageNumber) => {
+  //   setCurrentPage(pageNumber);
+  // };
 
   const MatChangeHandler = (e) => {
     const mat = e.target.value;
@@ -38,26 +37,31 @@ const HomeScreen = ({ history }) => {
     history.push(`/products/${mat}`);
   };
 
+  const unique = () => {
+    let productMat = products.map((product) => product.material);
+    const unique = [...new Set(productMat)];
+    unique.unshift("Choose the material");
+    return unique;
+  };
   return (
     <>
       <h3>Latest Products</h3>
       <p>Material Used</p>
       <Form.Control as="select" onChange={MatChangeHandler}>
-        {initialState.map((state) => (
-          <option key={state._id} value={state.material}>
-            {state.material}
+        {unique().map((mat, index) => (
+          <option key={index} value={mat}>
+            {mat}
           </option>
         ))}
       </Form.Control>
-
       {loading ? (
-        <Loader />
+        <Loader></Loader>
       ) : error ? (
         <Message variant="danger">{error}</Message>
       ) : (
         <Row>
           {products.map((product) => (
-            <Col key={product._id} sm={12} md={6} lg={4} xlg={3}>
+            <Col key={product._id} sm={6} md={3} lg={2} xlg={2}>
               <Product product={product} />
             </Col>
           ))}
